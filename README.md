@@ -19,7 +19,9 @@ Be26. Så kan hostingen flyttes væk fra GitHub senere uden at udsende en ny kli
 
 ## Regler for filerne
 
-- `latest-version.txt` indeholder **kun** versionsnummeret på én linje, f.eks. `26.0.0`.
+- `latest-version.txt` indeholder **kun** versionsnummeret på én linje, f.eks. `11.26.8.26`.
+  Be26 bruger firetalsformen `major.år.måned.dag`, og klienten sammenligner med
+  `Version.TryParse`, så formen skal matche assembly-versionen.
   Ingen BOM, ingen præfiks som "v". Afsluttende linjeskift er tilladt — klienten skal `trim()`.
 - `versionhistory.md` er ren Markdown/tekst, nyeste version øverst.
 
@@ -28,9 +30,9 @@ Be26. Så kan hostingen flyttes væk fra GitHub senere uden at udsende en ny kli
 ```bash
 git clone https://github.com/<ORG>/build-versions.git
 cd build-versions
-echo "26.0.1" > be/be26/latest-version.txt
+echo "11.26.8.27" > be/be26/latest-version.txt
 $EDITOR be/be26/versionhistory.md
-git commit -am "Be26 26.0.1"
+git commit -am "Be26 11.26.8.27"
 git push
 ```
 
