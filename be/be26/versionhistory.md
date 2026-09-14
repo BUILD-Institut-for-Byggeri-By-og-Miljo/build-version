@@ -1,5 +1,19 @@
 # Be26Eng — Ændringslog
 
+## Version 11.26.9.14
+
+### Pakke-ændringer
+
+- **Automatisk signering af DLL-pakken** — `Be26Eng.dll` (32-bit) og `Be26Engine.exe` signeres nu automatisk med Azure Artifact Signing som en del af pakningen, på samme måde som Be26-installationsprogrammet. Signaturnavnet er `Aalborg Universitet`; tidligere pakker var signeret som `Aalborg University`. Integrationer, der kontrollerer signaturens udsteder, skal opdateres til det nye navn (se `Aendringer_siden_11.26.5.28.md`).
+- **Ingen ændringer i beregningskernen** siden 11.26.8.26. API, eksporterede funktioner og resultat-XML er uændrede.
+
+### Be26-programmet
+
+- **Nyt moderne temaudtryk** — Et nyt, roligere udtryk med nye ikoner kan vælges under temaindstillingerne; det gamle udtryk kan fortsat vælges.
+- **Engelsk hjælp** — Hjælpen findes nu også på engelsk og følger programmets sprogvalg.
+- **Hjælpetekster opdateret** — Hjælpen er gennemgået og udvidet, blandt andet for "Vis som tabel", import/eksport-knappen på tabelsiderne og fortryd-konflikter. Beregner-siden er fjernet fra hjælpen.
+- **Sprogvalg** — Det valgte sprog markeres med en ramme, og der advares, hvis decimaltegnet i Windows ikke svarer til sproget.
+
 ## Version 11.26.8.26
 
 ### Fejlrettelser i brugerfladen
