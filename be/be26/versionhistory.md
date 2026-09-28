@@ -1,10 +1,46 @@
 # Be26Eng — Ændringslog
 
+## Version 11.26.9.28
+
+### Pakke-ændringer
+
+- **E001 afviser færre filer** — Beregningskernen afviser nu kun filer, hvor den gamle Be18-andel med mekanisk køling (`cooling_frac`) reelt ikke kan oversættes: andel mellem 0 og 1, mekanisk køling slået til og ingen zoner med `mech_cooling`/`incl_in_cooling_frac`. Fejlteksten for E001 er omskrevet og nævner nu andelen og antallet af zoner. Se `Aendringer_siden_11.26.9.14.md` og `DiagnosticsAndBreakingChanges.html`.
+- **Varmepumper uden alle felter regnes med skemaets standardværdier** — Ændrer resultatet for filer, hvor en varmepumpe mangler felter (se nedenfor). Filer, der er gemt af Be18 eller af Be26 med alle felter, er upåvirkede.
+- **Ingen ændringer i API'et eller i strukturen af resultat-XML'en.**
+
+### Be26-programmet
+
+- **Be26 til macOS** — Be26 findes nu også som signeret og notariseret program til Mac med Apple Silicon.
+- **Licens i webudgaven** — Licensoplysningerne gemmes nu i den enkelte browser, og licensen kontrolleres, før der regnes. Sammenligning med regneark viser en besked, hvis licensen mangler.
+
+### Flere varmepumper i samme zone (issue #76)
+
+- **Varmepumpe tilføjet i Be26 blev regnet med forkert varmeafgiver** — En varmepumpe, der er oprettet med "Tilføj varmepumpe", fik kun gemt de felter, brugeren selv havde udfyldt. For de manglende felter viste skemaet "Udeluft/Varmeanlæg", mens beregningen stille regnede med "Rumluft" som varmeafgiver, og for den manglende relative COP ved 50 % viste skemaet 0,8, mens beregningen brugte 0. Med en udeluftvarmepumpe til gulvvarme gav det en for høj COP og dermed for lavt elforbrug til varmepumpen (776 mod regnearkets 1012 kWh i eksemplet Parcelhus med ventilations- og udeluftvarmepumpe). Beregningen bruger nu de samme standardværdier, som skemaet viser. (`BeCalc\Model\HeatPumpSystem.cs`)
+- **Nye varmepumper gemmes med alle felter** — "Tilføj varmepumpe" skriver nu alle felter for rumopvarmning og varmt brugsvand med standardværdier, som Be26 altid har gjort, så filen også kan læses af den 32-bit beregningskerne (`Be26Eng.dll`), der afviste den sparsomme fil med "[VP_COMP] Unknown enumeration ''". (`BeData\Model\Be05Model.cs`)
+- **Afkrydsningsfelt i stedet for minus foran andelen** — At en anden varmepumpe dækker resten af samme zone blev angivet med et minus foran "Andel af etageareal". Det angives nu med afkrydsningsfeltet "Anden varmepumpe dækker resten af zonen", og andelen vises altid positiv. Filformatet er uændret (fortegnet gemmes stadig), så Be18-filer og den 32-bit kerne forstår det samme. (`BeComponents\Pages\HeatPump.razor`, `BeData\Model\HeatPumpWrapper.cs`, `BeDoc\Help`)
+- **Sammenligning med regneark** — Testmodellen `Be26-v30` (Parcelhus med ventilationsvarmepumpe, udeluftvarmepumpe og el til varmt brugsvand) sammenlignes nu automatisk med Be05-regnearkets RESULTAT-ark. (`BeCalc.Tests\V30MultiHeatPumpTest.cs`)
+
+### Fejlrettelser i brugerfladen
+
+- **Rotation kan angives fra -360 til 360°** — Grænsen -180 til 180° var alene en indtastningsgrænse; beregningen normaliserer alle vinkler modulo 360, og Be18 tillod 0 til 360°. Ved fokusskift blev fx 270° klemt ned til 180° og modellen ændret. (`BeData\Validation\BuildingLimits.cs`)
+- **Skyggeforhold: "Vindueshul" er i procent, ikke meter** — Feltet var mærket "Lysning, m" med grænsen 0-10 m, mens kolonneoverskriften, modeldokumentet, Be18 og selve beregningen (knæk ved 10, 20 og 30 %) alle bruger procent. En Be18-fil med fx 14 % blev vist som fejl og klemt ned til 10 ved fokusskift. Feltet hedder nu "Vindueshul, %" med grænsen 0-100, og hjælpeteksten er rettet. (`BeData\Validation\BuildingLimits.cs`, `BeLocalize`, `BeDoc\Help`)
+- **Tabelvisning: kolonnebredderne hoppede ved scroll** — Kolonnerne fulgte indholdet i de synlige rækker, og da tabellerne er virtualiserede, skiftede bredderne, hver gang der blev scrollet. Felterne har nu faste bredder pr. type (navn, valgliste, tal), så kolonnerne står stille. Gælder alle tabelsider. (`BeComponents\wwwroot\becomponents.css`)
+- **Tabel- og kortvisning hakkede ved scroll** — Alle lister blev virtualiseret, så Blazor genopbyggede tunge rækker og kort (10-16 inputfelter hver) for hvert scroll-trin, i webudgaven over SignalR. Lister under 200 rækker (60 kortrækker) rendres nu fuldt ud én gang, så browseren scroller selv; større lister virtualiseres med fast rækkehøjde og en buffer på 12 elementer, så der genrendres sjældent. Gælder alle syv tabelsider og deres kortvisninger. (`BeComponents\Components\BeVirtualize.razor`, `BePageBase.cs`)
+- **Tabelvisning skifter ikke længere til stablet mobilvisning på smalle skærme** — MudBlazor stablede tabellen række for række under et bredde-breakpoint, hvilket gjorde den ulæselig. Tabellen beholder nu sine kolonner og scroller vandret; kortvisningen er fortsat valget til små skærme. (`Breakpoint="Breakpoint.None"` på alle syv tabelsider)
+
+### Be18-filer med kølingsandel (E001)
+
+- **Be18-feltet `cooling_frac` oversættes ved indlæsning** — Be18 gemte andelen med mekanisk køling som ét tal på bygningen; Be26 angiver mekanisk køling pr. ventilationszone. Programmet fjerner nu feltet, når en fil åbnes, og markerer zonerne: har bygningen ikke mekanisk køling (eller er andelen 0), fjernes feltet blot; er andelen 1, markeres alle zoner; er andelen en brøkdel, markeres alle zoner, og en meddelelse beder om at fjerne markeringen på de zoner, der ikke køles. Modellen markeres som ændret, så den gemmes i nyt format, og feltet skrives aldrig ved gem. Tidligere blev feltet bevaret ved gem, så en Be18-fil blev ved med at blive afvist af kernen (E001), selv efter zonerne var sat, og resultatsiden viste blot tomme faner. (`BeData\Model\LegacyCoolingFractionMigration.cs`, `BeData\Model\Be05Model.cs`)
+- **Andelen med mekanisk køling udledes af zonerne** — `Building.CoolingFraction` i BeData læser ikke længere det gamle felt, men beregner andelen af zonernes arealer og flag som kernen gør. Feltet "Andel mek. køling" i regnearkssammenligningen er dermed skrivebeskyttet. (`BeData\Model\BuildingWrapper.cs`, `BeCompare\ModelCompare\ModelFieldMap.cs`)
+- **E001 udløses kun, når andelen reelt er tvetydig** — Kernen afviser nu kun filer med `0 < cooling_frac < 1`, hvor bygningen har mekanisk køling, og ingen zone bærer `mech_cooling`/`incl_in_cooling_frac`. Filer uden mekanisk køling, filer med andel 1 og filer, der allerede har zoneflag, beregnes. Tidligere blev fx en Be18-fil med 27 zoner og køling slået fra afvist, og det samme gjorde filer i nyt format, der stadig bar det gamle felt. Kontrollen ligger nu i BeCalc, så alle værter bruger den samme. (`BeCalc\Model\ModelDiagnostics.cs`, `Be26Eng\NativeExports.cs`)
+- **Resultatsiden viser kernens afvisning** — Afviser kernen modellen (E001/E002), viser fanen Beregning nu koden og kernens forklaring i stedet for tomme faner, og for E001 en henvisning til Ventilation. Kernens tekst følger programmets sprog. (`Be26Native\NativeCalculationService.cs`, `BeComponents\Pages\Results.razor`)
+- **Webudgaven bruger samme kontrol** — Webudgavens beregning afviser nu de samme filer som kernen (E001) og melder E002, hvis modellen henviser til en klimadatafil, som webudgaven ikke kan læse; tidligere blev der stille regnet med referenceklimaet. (`BeWeb\Services\ManagedBeCalcCalculationService.cs`)
+
 ## Version 11.26.9.14
 
 ### Pakke-ændringer
 
-- **Automatisk signering af DLL-pakken** — `Be26Eng.dll` (32-bit) og `Be26Engine.exe` signeres nu automatisk med Azure Artifact Signing som en del af pakningen, på samme måde som Be26-installationsprogrammet. Signaturnavnet er `Aalborg Universitet`; tidligere pakker var signeret som `Aalborg University`. Integrationer, der kontrollerer signaturens udsteder, skal opdateres til det nye navn (se `Aendringer_siden_11.26.5.28.md`).
+- **Automatisk signering af DLL-pakken** — `Be26Eng.dll` (32-bit) og `Be26Engine.exe` signeres nu automatisk med Azure Artifact Signing som en del af pakningen, på samme måde som Be26-installationsprogrammet. Signaturnavnet er `Aalborg Universitet`; tidligere pakker var signeret som `Aalborg University`. Integrationer, der kontrollerer signaturens udsteder, skal opdateres til det nye navn (se `Aendringer_siden_11.26.9.14.md`).
 - **Ingen ændringer i beregningskernen** siden 11.26.8.26. API, eksporterede funktioner og resultat-XML er uændrede.
 
 ### Be26-programmet
