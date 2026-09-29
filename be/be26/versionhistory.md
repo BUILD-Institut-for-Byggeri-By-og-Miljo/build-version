@@ -1,5 +1,26 @@
 # Be26Eng — Ændringslog
 
+## Version 11.26.9.29
+
+### Pakke-ændringer
+
+- **Ingen ændringer i beregningskernen** siden 11.26.9.28. Rettelserne herunder vedrører programmets felter, grænser, hjælp og lukning.
+
+
+### Fejlrettelser i brugerfladen
+
+- **Advarsel om ugemte ændringer ved lukning** — Lukkede man Be26 med ugemte ændringer, lukkede programmet uden at spørge, og ændringerne gik tabt. Nu vises "Gem / Kassér / Annullér" som ved åbning af en anden fil, når vinduet lukkes på Windows, og ved Afslut (Cmd+Q) på Mac. (issue #79, `BeComponents\Services\AppCloseGuard.cs`, `BeWeb.Maui\App.xaml.cs`, `BeWeb.Maui\Platforms\MacCatalyst\AppDelegate.cs`)
+- **Ugemte ændringer gendannes efter nedbrud** — Desktop-programmet gemmer nu en gendannelseskopi, så længe der er ugemte ændringer. Lukkes programmet uden at spørge (Macs røde lukkeknap, nedbrud, tvungen lukning), tilbydes ændringerne ved næste start, og modellen står som ugemt. Kopien fjernes, når modellen gemmes, eller når ændringerne kasseres ved lukning. (`BeWeb.Maui\Services\MauiAutoSaveService.cs`)
+- **Setpunkt for rumopvarmning: standard er 20 °C** — Feltet viste "standard 21", mens en ny fil og beregningen bruger 20 °C. (issue #80, `BeData\Validation\BuildingDefaults.cs`)
+- **Belastningsfaktor for mekanisk køling må være over 1** — Faktoren er forholdet mellem den interne belastning i kølede og ikke-kølede rum, og en ny fil har standardværdien 1,2. Grænsen 0-1 gav en fejlmeddelelse i en ny fil; grænsen er nu 0-10. (issue #81, `BeData\Validation\BuildingLimits.cs`)
+- **Belysning: tabeloverskrifterne overlappede** — De lange overskrifter ombrydes nu på 2-3 linjer, så de ikke løber ind i hinanden. (issue #82, `BeComponents\wwwroot\becomponents.css`)
+- **Programmets data flyttes til `%LOCALAPPDATA%\BUILD`** — Indstillinger, licens og seneste filer lå i en mappe med navnet "User Name" (en rest fra projektskabelonen). De kopieres automatisk til den nye mappe ved første start, så intet går tabt. (`BeWeb.Maui\Platforms\Windows\LegacyDataFolderMigration.cs`)
+- **Engelske menunavne** — "Boilers and district heating" hedder nu "Boilers", og "District heating exchanger" hedder "District heating". (issue #73)
+
+### Hjælp
+
+- **Belysningsniveau** — Hjælpen angiver nu 500 lux for kontorarbejde efter DS/EN 12464-1 (tidligere 300 lux) og 300 lux for klasselokaler i skoler. (issue #83)
+
 ## Version 11.26.9.28
 
 ### Pakke-ændringer
