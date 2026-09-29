@@ -7,7 +7,11 @@
 - **Sommertemperaturberegningen afviser nu de samme filer som resten af kernen** — `Be06Temp` kontrollerer nu modellen for E001 (gammel kølingsandel fra Be18) og E002 (klimafil mangler eller er ugyldig) ligesom `Be06Calc`. Tidligere blev en sådan fil beregnet uden fejl, eller beregningen stoppede blot med returkode 3. Nu skrives en `_tmp.xml`, der kun indeholder fejlkoden og en forklaring (`<diagnostics>`), og funktionen returnerer 0.
 - **XML-erklæring i alle outputfiler** — Fejlsvar (`<diagnostics>`), `_log.xml` og `_tmp.xml` starter nu med `<?xml version="1.0" encoding="ISO-8859-1"?>` ligesom resultatfilerne, så danske tegn altid læses korrekt.
 - **Manualen `Be26EngV11.pdf` er fjernet fra pakken** — `README.txt` beskriver nu de eksporterede funktioner, kaldkonventionen og filerne.
-- Ingen ændringer i beregningen, i API'et eller i strukturen af resultat-XML'en.
+- Ingen ændringer i API'et eller i strukturen af resultat-XML'en. Beregningen er kun ændret for pumper i varmefordelingsanlægget, hvor antallet nu ganges med (se herunder).
+
+### Fejlrettelser i beregningen
+
+- **Antal pumper indgår i elforbruget** — Pumper i varmefordelingsanlægget har et antal, som Be18 gangede med i elforbruget, men Be26 regnede hver linje som én pumpe. En bygning med fx én linje for 89 ens pumper fik derfor alt for lavt elforbrug til pumper. Elforbruget regnes nu som antal × nominel effekt × fp. Mangler fp i filen, bruges 1,0, som skemaet viser. Filer, hvor alle pumper har antal 1, er upåvirkede.
 
 ### Fejlrettelser i brugerfladen
 
@@ -19,6 +23,9 @@
 - **Belysning: tabeloverskrifterne overlappede** — De lange overskrifter ombrydes nu på 2-3 linjer, så de ikke løber ind i hinanden.
 - **Programmets data flyttes til `%LOCALAPPDATA%\BUILD` (Windows)** — Indstillinger, licens og seneste filer lå i en mappe med navnet "User Name" (en rest fra projektskabelonen). De kopieres automatisk til den nye mappe ved første start, så intet går tabt.
 - **Engelske menunavne** — "Boilers and district heating" hedder nu "Boilers", og "District heating exchanger" hedder "District heating".
+- **Antal pumper kan angives** — Pumpetabellen under Varmefordelingsanlæg har fået kolonnen "Antal", som i Be18.
+- **Varmt brugsvand kan oprettes i en ny model** — En ny bygning havde intet anlæg til varmt brugsvand, og siden kunne ikke oprette det. Siden har nu knappen "Tilføj varmt brugsvand".
+- **Varmekapacitet for det kritiske rum** — Under Sommerkomfort kan rummets egen varmekapacitet igen angives, som beskrevet i SBi-anvisning 213 (2026). 0 betyder bygningens varmekapacitet.
 
 ### Be26-programmet
 
