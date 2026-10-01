@@ -10,6 +10,8 @@ Hostes på GitHub Pages bag eget domæne: **https://versions.build.dk**
 |---|---|
 | Be26 – seneste version | `https://versions.build.dk/be/be26/latest-version.txt` |
 | Be26 – versionshistorik | `https://versions.build.dk/be/be26/versionhistory.md` |
+| BSim – seneste version | `https://versions.build.dk/bsim/latest-version.txt` |
+| BSim – versionshistorik | `https://versions.build.dk/bsim/versionhistory.md` |
 
 Struktur er `/<familie>/<produkt>/<fil>`, så Be18 senere kan lægges i
 `/be/be18/` og BSIM i `/bsim/` uden at Be26's URL ændrer sig.
