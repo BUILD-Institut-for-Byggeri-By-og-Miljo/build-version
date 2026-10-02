@@ -20,6 +20,8 @@ Første udgivelse siden videreudviklingen af BSim blev genoptaget i 2026. Ændri
 - **Licensdialog** — Licensen registreres og fjernes i programmet under *Help / License...*, som også viser de installerede licenser og deres udløbsdato. Udløbsdatoen fornyes automatisk online.
 - **Uden licens** — BSim starter, men kun Help-menuen kan bruges. Menuerne låses op, så snart en licens registreres, og databasevinduet lukkes, når licensen fjernes.
 - **Nyt installationsprogram** — BSim installeres i `Program Files (x86)\BUILD\BSim`, og programfilen hedder nu BSim.exe.
+- **Opgradering som standard** — Findes en tidligere BSim, foreslår installationsprogrammet at opgradere den og viser, hvilken mappe der fjernes. Det er stadig muligt at installere ved siden af den tidligere version.
+- **Læsbar status under installationen** — Statuslinjen viser trinnene som almindelig tekst, fx "Kopierer nye filer", på installationsprogrammets sprog.
 
 ### Database
 
