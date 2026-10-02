@@ -1,6 +1,6 @@
 # BSim — Ændringslog
 
-## Version 8.26.10.1
+## Version 8.26.10.2
 
 Første udgivelse siden videreudviklingen af BSim blev genoptaget i 2026. Ændringerne er i forhold til version 7.23.5.31. Punkter markeret **(resultater)** kan give andre simuleringsresultater end tidligere versioner for de samme modeller.
 
@@ -31,9 +31,6 @@ Første udgivelse siden videreudviklingen af BSim blev genoptaget i 2026. Ændri
 - **Personbelastning** — *PeopleLoad* har fået felter for tør og latent varme og for CO₂, og standardværdierne for personer er opdateret.
 - **Solabsorptans på finish-materialer (resultater)** — En brugerdefineret solabsorptans på finish-materialer blev ignoreret og bruges nu.
 - **Langbølget stråling (resultater)** — Med *Longwave* slået til tager view factors nu højde for flader, der skygger for hinanden, også i konkave rum og mellem rum forbundet af åbninger.
-- **Kortbølget fordeling i zonen (resultater)** — Solen fordeles i to trin. Første træf er solpletten fra XSun (uden XSun faste andele pr. fladetype), og den diffuse sol fordeles efter view factors. Derefter fordeles refleksionerne mellem alle flader. Sol gennem indvendige vinduer og huller går videre til zonen på den anden side.
-- **Tab gennem vinduer (resultater)** — Det solindfald, der tabes ud gennem vinduerne (*Lost*), beregnes nu i stedet for at være en fast andel på 10 %. Feltet *Lost* er fjernet, *ToAir* er 0 i nye zoner, og feltet *Fraction* (diffus sol gennem indvendige vinduer) er fjernet.
-- **A-kurver** — A-kurver for ruder angivet i procent omregnes automatisk. En ugyldig A-kurve regnes som manglende med en advarsel på vinduet.
 - **XSun** — Ændring af *Floor* i den termiske zone opdaterer nu solfordelingen, og fordelingen *ToFloor* gemmes korrekt.
 - **SimLight (resultater)** — Beregningen af reflekteret lys mellem flader er rettet, og dagslysfaktorer overføres til vinduer med fuld præcision.
 
