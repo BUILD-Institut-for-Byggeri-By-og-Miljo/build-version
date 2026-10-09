@@ -1,5 +1,28 @@
 # Be26 — Ændringslog
 
+## Version 11.26.10.9
+
+### Pakke-ændringer
+
+- **Dokumentationen er samlet** — Referencedokumenterne beskriver kun den aktuelle version. Forskellene i forhold til Be18 står samlet i `Be26_vs_Be18.html`, som erstatter de to tidligere Be18-sammenligninger, og diagnostikken (E001/E002) står i `Be26_Diagnostik.html`, som erstatter `DiagnosticsAndBreakingChanges.html`. Ændringsloggen og oversigten over ændringer siden 11.26.9.14 følger ikke længere med pakken. Datamodel og resultatformat er gennemgået felt for felt mod beregningskernen.
+- **E001 på dansk bruger decimalkomma** — Den danske fejltekst skriver fx "0,4" i stedet for "0.4". Koden og den engelske tekst er uændrede.
+- Ingen ændringer i API'et eller i strukturen af resultat-XML'en. Resultaterne ændres for bygninger med gas-vandvarmer og i tabellen for brændselsfordeling (se herunder).
+
+### Fejlrettelser i beregningen
+
+- **Gas-vandvarmerens varmetab regnes som i Be18** — Varmetabet er varmetabskoefficienten (W/K) gange forskellen mellem brugsvandstemperaturen og temperaturen i opstillingsrummet, bestemt af b-faktoren. Be26 brugte koefficienten direkte som en effekt i W, så tabet blev alt for lille, og b-faktoren blev ikke brugt. Samtidig udfyldes rækkerne "Dec. gasvarmer" og "Tab dec. gasvandvarmere" under varmt brugsvand, som stod på 0, og "Dec. gasvandvarmere" under dækning af varmebehovet viser den leverede varme i stedet for gasforbruget.
+- **Brændselsfordelingen vægtes over alle kedler** — Andelene af olie, gas og biobrændsel beregnes som i Be18 ud fra antal × nominel effekt for hver kedel. Be26 brugte kun den første kedels brændsel og viste 0 for alle brændsler, når varmeforsyningen ikke var kedel, selv om modellen havde en kedel (fx eksempelfilerne, der nu viser gas 1,00).
+- **Antal varmtvandsbeholdere kan være et decimaltal** — Et antal skrevet som fx "2.0" blev læst som 1.
+
+### Fejlrettelser i brugerfladen
+
+- **Pilotflammen for gas-vandvarmere når beregningen** — Feltet blev gemt i kW under et navn, som beregningen ikke læser, så pilotflammen indgik aldrig. Feltet gemmes nu i W i Be18-feltet, og eksisterende filer omregnes ved åbning. Grænsen er 0-500 W.
+- **Antal kedler gemmes i Be18-feltet** — Antallet blev gemt under et eget navn, så antallet fra Be18-filer blev vist som 1. Eksisterende filer omregnes ved åbning.
+
+### Hjælp
+
+- **Vandvarmere** — Temperaturfaktoren b er 0, når vandvarmeren står i den opvarmede zone, og 1, når den står ude (hjælpen sagde det modsatte). Varmetabet angives i W/K for både el- og gas-vandvarmere.
+
 ## Version 11.26.9.29
 
 ### Pakke-ændringer
